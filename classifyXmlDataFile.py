@@ -50,8 +50,8 @@ def classifyXmlDataFile(config_file,xml_data_file,out_result_file):
 		case_id_list.append(cand_id)
 		data_list.append(case_id2seg_data[cand_id])
 
-	level1_predict = fasttext_clf.predictLevel1TagForSamples(data_list)
-	level2_predict = linear_svc_clf.predictLevel2TagForSamples(data_list)
+	level1_predict = fasttext_clf.predictLevel1TagForSamplesWithProb(data_list)
+	level2_predict = linear_svc_clf.predictLevel2TagForSamplesWithProb(data_list)
 
 	if len(case_id_list) != len(level1_predict) \
 		or len(level1_predict) != len(level2_predict):
@@ -62,8 +62,25 @@ def classifyXmlDataFile(config_file,xml_data_file,out_result_file):
 	
 
 	for idx in range(len(case_id_list)):
-		level_1_tag = level1_predict[idx]
-		level_2_tag = level2_predict[idx]
+		level_1_tag_pred_list = level1_predict[idx]
+		level_2_tag_pred_list = level2_predict[idx]
+
+		pred_level_1_tag = level_1_tag_pred_list[0][0]
+		pred_level_2_tag = level_2_tag_pred_list[0][0]
+
+		#根据一级分类标签对二级分类标签进行修正
+		#按照二级分类排序，选择第一个对应的一级分类标签和预测的一级分类标签一致的二级分类标签作为最终二级标签
+		changed_level_2_tag = pred_level_2_tag
+		for cand_tag_prob_pair in level_2_tag_pred_list:
+			cand_pred_level_2_tag = cand_tag_prob_pair[0]
+
+			if cand_pred_level_2_tag in level2_tag2level1_tag \
+				and level2_tag2level1_tag[cand_pred_level_2_tag] == pred_level_1_tag:
+					changed_level_2_tag = cand_pred_level_2_tag
+					break
+		
+		level_1_tag = pred_level_1_tag
+		level_2_tag = changed_level_2_tag
 
 		case_id = case_id_list[idx]
 		
