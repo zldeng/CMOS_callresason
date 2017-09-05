@@ -10,7 +10,7 @@ import json
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-sys.path.append('/home/dengzhilong/work/call_reason/sklearn_code/Model/Code/LtpTool/')
+sys.path.append('/home/dengzhilong/work/call_reason/sklearn_code/Model/CMOS_callresason/LtpTool/')
 
 import ConfigParser
 
