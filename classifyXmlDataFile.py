@@ -17,6 +17,7 @@ sys.path.append('./BaseUtil')
 
 from DataUtil import loadConfig
 from DataUtil import convertXmlDataToSeggedData
+from DataUtil import getTagPairInfo
 
 from LinearSvcClf import LinearSvcClf
 from FastTextClf import FastTextClf
@@ -30,6 +31,8 @@ def classifyXmlDataFile(config_file,xml_data_file,out_result_file):
 	'''
 	config_dic = loadConfig(configure_file)
 	
+	level2_tag2level1_tag,level1_tag2level2_tag_set = getTagPairInfo(config_dic)
+
 	fasttext_clf = FastTextClf(config_dic)
 
 	if not fasttext_clf.loadModel():
